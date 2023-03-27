@@ -33,12 +33,13 @@ print(f"File in MBs: {file_stats.st_size / (1024 * 1024)}")
 
 token_credential = DefaultAzureCredential()
 
-blob_service_client = BlobServiceClient(
-    account_url=f"https://{storage_name}.blob.core.windows.net",
-    credential=token_credential
-)
+# blob_service_client = BlobServiceClient(
+#     account_url=f"https://{storage_name}.blob.core.windows.net",
+#     credential=token_credential
+# )
 
-container_client = blob_service_client.get_container_client(container_name)
+# container_client = blob_service_client.get_container_client(container_name)
+# blob_client = container_client.get_blob_client(...)
 
 # https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-blob/12.15.0/azure.storage.blob.html#azure.storage.blob.BlobClient
 max_block_size = 4000*1024*1024  # 4000 MB
@@ -47,8 +48,6 @@ min_large_block_upload_threshold = 256*1024*1024 + 1  # 256 MB
 max_single_get_size = 256*1024*1024  # 256 MB
 max_chunk_get_size = 256*1024*1024  # 256 MB
 use_byte_buffer = False
-
-# blob_client = container_client.get_blob_client(...)
 
 blob_client = BlobClient(
     account_url=f"https://{storage_name}.blob.core.windows.net",
@@ -59,6 +58,10 @@ blob_client = BlobClient(
     max_chunk_get_size=max_chunk_get_size, use_byte_buffer=use_byte_buffer
 )
 
+# Examples from
+# https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world.py
+
+# Upload using 256 MB chunks
 file_chunk_size = 256*1024*1024  # 256 MB
 chunk_index = 1
 block_list = []
@@ -72,14 +75,8 @@ with open(file_path + file_name, "rb") as data:
         block_list.append(BlobBlock(block_id=block_id))
         chunk_index += 1
 
+# Commit blocks
 blob_client.commit_block_list(block_list)
 
-
-# Examples from
-# https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world.py
-with open(file_path + file_name, "rb") as data:
-    blob_client.upload_blob(data, blob_type="BlockBlob")
-
+# Delete blob
 blob_client.delete_blob()
-
-# https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world.py#LL115-L128C66
