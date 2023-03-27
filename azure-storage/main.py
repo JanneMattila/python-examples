@@ -18,9 +18,10 @@
 # To generate demo file in bash:
 # truncate -s 500m demo.bin
 
-from azure.storage.blob import BlobServiceClient, BlobClient
+from azure.storage.blob import BlobServiceClient, BlobClient, BlobBlock
 from azure.identity import DefaultAzureCredential
 import os
+import uuid
 
 storage_name = os.environ["storage_name"]
 container_name = os.environ["container_name"]
@@ -57,6 +58,22 @@ blob_client = BlobClient(
     min_large_block_upload_threshold=min_large_block_upload_threshold, max_single_get_size=max_single_get_size,
     max_chunk_get_size=max_chunk_get_size, use_byte_buffer=use_byte_buffer
 )
+
+file_chunk_size = 256*1024*1024  # 256 MB
+chunk_index = 1
+block_list = []
+
+with open(file_path + file_name, "rb") as data:
+    while chunk := data.read(file_chunk_size):
+        print(f"Chunk {chunk_index}")
+        block_id = str(uuid.uuid4())
+        blob_client.stage_block(
+            block_id=block_id, data=chunk)
+        block_list.append(BlobBlock(block_id=block_id))
+        chunk_index += 1
+
+blob_client.commit_block_list(block_list)
+
 
 # Examples from
 # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world.py
