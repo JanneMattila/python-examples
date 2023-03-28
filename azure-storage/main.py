@@ -55,6 +55,8 @@ max_single_put_size = 256*1024*1024  # 256 MB
 min_large_block_upload_threshold = 256*1024*1024 + 1  # 256 MB
 max_single_get_size = 256*1024*1024  # 256 MB
 max_chunk_get_size = 256*1024*1024  # 256 MB
+
+# Use a byte buffer for block blob uploads. Defaults to False.
 use_byte_buffer = False
 
 blob_client = BlobClient(
