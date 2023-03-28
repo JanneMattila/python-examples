@@ -14,12 +14,14 @@
 # $env:container_name="<your_storage_container_name>"
 # $env:file_path="<your_file_path>"
 # $env:file_name="<your_filename>"
+# $env:storage_key="<your_storage_key>"
 
 # To generate demo file in bash:
 # truncate -s 500m demo.bin
 
 from azure.storage.blob import BlobServiceClient, BlobClient, BlobBlock
 from azure.identity import DefaultAzureCredential
+from azure.core.credentials import AzureNamedKeyCredential
 import os
 import uuid
 
@@ -27,15 +29,21 @@ storage_name = os.environ["storage_name"]
 container_name = os.environ["container_name"]
 file_path = os.environ["file_path"]
 file_name = os.environ["file_name"]
+storage_key = os.environ["storage_key"]
 
 file_stats = os.stat(file_path + file_name)
 print(f"File in MBs: {file_stats.st_size / (1024 * 1024)}")
 
-token_credential = DefaultAzureCredential()
+credential = DefaultAzureCredential()
+
+if storage_key != "":
+    print("Using storage key for authentication")
+    credential = AzureNamedKeyCredential(
+        os.environ["storage_name"], storage_key)
 
 # blob_service_client = BlobServiceClient(
 #     account_url=f"https://{storage_name}.blob.core.windows.net",
-#     credential=token_credential
+#     credential=credential
 # )
 
 # container_client = blob_service_client.get_container_client(container_name)
@@ -52,7 +60,7 @@ use_byte_buffer = False
 blob_client = BlobClient(
     account_url=f"https://{storage_name}.blob.core.windows.net",
     container_name=container_name,
-    credential=token_credential,
+    credential=credential,
     blob_name=file_name, max_block_size=max_block_size, max_single_put_size=max_single_put_size,
     min_large_block_upload_threshold=min_large_block_upload_threshold, max_single_get_size=max_single_get_size,
     max_chunk_get_size=max_chunk_get_size, use_byte_buffer=use_byte_buffer
@@ -61,7 +69,7 @@ blob_client = BlobClient(
 # Examples from
 # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world.py
 
-# Upload using 256 MB chunks
+# Upload example
 file_chunk_size = 256*1024*1024  # 256 MB
 chunk_index = 1
 block_list = []
@@ -77,6 +85,17 @@ with open(file_path + file_name, "rb") as data:
 
 # Commit blocks
 blob_client.commit_block_list(block_list)
+
+# Download example:
+stream = blob_client.download_blob()
+
+chunk_index = 1
+with open(file_path + file_name, "wb") as data:
+    for chunk in stream.chunks():
+        # process your data (anything can be done here really. `chunk` is a byte array).
+        print(f"Chunk {chunk_index}")
+        data.write(chunk)
+        chunk_index += 1
 
 # Delete blob
 blob_client.delete_blob()
