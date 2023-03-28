@@ -92,7 +92,6 @@ stream = blob_client.download_blob()
 chunk_index = 1
 with open(file_path + file_name, "wb") as data:
     for chunk in stream.chunks():
-        # process your data (anything can be done here really. `chunk` is a byte array).
         print(f"Chunk {chunk_index}")
         data.write(chunk)
         chunk_index += 1
