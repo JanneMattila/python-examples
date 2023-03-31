@@ -2,6 +2,8 @@
 
 ## Block blob
 
+See more details at [Azure Storage demos](https://github.com/JanneMattila/azure-storage-demos).
+
 Example output when uploading 512'000 KB file with two 256MB chunks:
 
 ```
