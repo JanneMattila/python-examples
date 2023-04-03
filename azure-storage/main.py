@@ -18,6 +18,7 @@
 
 # To generate demo file in bash:
 # truncate -s 500m demo.bin
+# head -c 500m </dev/urandom > demo2.bin
 
 from azure.storage.blob import BlobServiceClient, BlobClient, BlobBlock
 from azure.identity import DefaultAzureCredential
