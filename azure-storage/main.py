@@ -18,7 +18,7 @@
 
 # To generate demo file in bash:
 # truncate -s 500m demo.bin
-# head -c 500m </dev/urandom > demo2.bin
+# head -c 500m </dev/urandom > demo.bin
 
 from azure.storage.blob import BlobServiceClient, BlobClient, BlobBlock
 from azure.identity import DefaultAzureCredential
@@ -76,6 +76,18 @@ blob_client = BlobClient(
 file_chunk_size = 256*1024*1024  # 256 MB
 chunk_index = 1
 block_list = []
+
+# Here is example, if you want to generate 1TB file from
+# single 256MB file by looping that same file for 4000 times:
+# for x in range(4000):
+#     with open(file_path + file_name, "rb") as data:
+#         while chunk := data.read(file_chunk_size):
+#             print(f"Chunk {chunk_index}")
+#             block_id = str(uuid.uuid4())
+#             blob_client.stage_block(
+#                 block_id=block_id, data=chunk)
+#             block_list.append(BlobBlock(block_id=block_id))
+#             chunk_index += 1
 
 with open(file_path + file_name, "rb") as data:
     while chunk := data.read(file_chunk_size):
