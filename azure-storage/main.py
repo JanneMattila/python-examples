@@ -6,9 +6,9 @@
 # https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 
 # pip install azure-identity
-# -> Successfully installed azure-identity-1.12.0
+# -> Successfully installed azure-identity-1.17.1
 # pip install azure-storage-blob
-# -> Successfully installed azure-storage-blob-12.15.0
+# -> Successfully installed azure-storage-blob-12.22.0
 
 # $env:storage_name="<your_storage_account_name>"
 # $env:container_name="<your_storage_container_name>"
@@ -70,10 +70,12 @@ blob_client = BlobClient(
 )
 
 # Examples from
+# https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-upload-python
 # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world.py
 
 # Upload example
 file_chunk_size = 256*1024*1024  # 256 MB
+# file_chunk_size = 10*1024*1024  # 10 MB
 chunk_index = 1
 block_list = []
 
@@ -101,6 +103,9 @@ with open(file_path + file_name, "rb") as data:
 # Commit blocks
 blob_client.commit_block_list(block_list)
 
+# Examples from:
+# https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-download-python
+
 # Download example:
 stream = blob_client.download_blob()
 
@@ -110,6 +115,13 @@ with open(file_path + file_name, "wb") as data:
         print(f"Chunk {chunk_index}")
         data.write(chunk)
         chunk_index += 1
+
+# Download example 2:
+with open(file_path + file_name, "wb") as data:
+    print(f"Download start")
+    # data.write(blob_client.download_blob().readall()) # Read the entire contents of this blob. This operation is blocking until all data is downloaded.
+    blob_client.download_blob().readinto(data) # Download the contents of this blob to a stream.
+    print(f"Download end")
 
 # Delete blob
 blob_client.delete_blob()
