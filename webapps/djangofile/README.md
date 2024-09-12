@@ -6,6 +6,12 @@ This guide explains how to deploy a Django application to Azure App Service usin
 
 [Oryx - Run](https://github.com/microsoft/Oryx/blob/main/doc/runtimes/python.md#run)
 
+[Oryx - Configuration](https://github.com/microsoft/Oryx/blob/main/doc/configuration.md)
+
+-> `PYTHON_ENABLE_GUNICORN_MULTIWORKERS`, `PYTHON_GUNICORN_CUSTOM_WORKER_NUM`, `PYTHON_GUNICORN_CUSTOM_THREAD_NUM`
+
+[Handling concurrent requests with Python on Azure App Service Linux using Gunicorn and Flask](https://techcommunity.microsoft.com/t5/apps-on-azure-blog/handling-concurrent-requests-with-python-on-azure-app-service/ba-p/3913844)
+
 ```bash
 # Create a virtual environment and install dependencies
 py -m venv .venv
@@ -40,5 +46,14 @@ az webapp identity assign --resource-group "rg-app-services" --name "pythonfilea
 
 # Configure environment variables
 az webapp config appsettings set --resource-group "rg-app-services" --name "pythonfileapp00001" --settings AZURE_STORAGE_ACCOUNT_NAME=your_storage_account_name
+
 az webapp config appsettings set --resource-group "rg-app-services" --name "pythonfileapp00001" --settings PYTHON_ENABLE_GUNICORN_MULTIWORKERS=true
+
+# Alternatively, you can define these parameters as well:
+az webapp config appsettings set --resource-group "rg-app-services" --name "pythonfileapp00001" --settings PYTHON_GUNICORN_CUSTOM_WORKER_NUM=4 # Default is  (2 * numCores) + 1
+az webapp config appsettings set --resource-group "rg-app-services" --name "pythonfileapp00001" --settings PYTHON_GUNICORN_CUSTOM_THREAD_NUM=4 # Default is 1
 ```
+
+Now you should be able to download multiple files concurrently:
+
+![Django App and two downloads](./images/two-downloads.png)
