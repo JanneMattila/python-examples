@@ -57,3 +57,18 @@ az webapp config appsettings set --resource-group "rg-app-services" --name "pyth
 Now you should be able to download multiple files concurrently:
 
 ![Django App and two downloads](../../images/two-downloads.png)
+
+## Tests
+
+> Perf testing is always tricky. Here are some
+> numbers with *very* **very** limited testing.
+> Your mileage *will* vary.
+
+Test downloading of a 500MB file with different configurations using B1 pricing tier with 1 core:
+
+| PYTHON_ENABLE_GUNICORN_MULTIWORKERS | PYTHON_GUNICORN_CUSTOM_WORKER_NUM | PYTHON_GUNICORN_CUSTOM_THREAD_NUM | Downloads |
+| :---------------------------------- | --------------------------------- | --------------------------------- | --------- |
+| <not set, defaults to "false">      | <not set, defaults to 1>          | <not set, defaults to 1>          | 1         |
+| true                                | <not set, defaults to 3>          | <not set, defaults to 1>          | 3         |
+| true                                | <not set, defaults to 3>          | 2                                 | 4         |
+| true                                | <not set, defaults to 3>          | 4                                 | 5+        |
