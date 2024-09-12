@@ -56,4 +56,4 @@ az webapp config appsettings set --resource-group "rg-app-services" --name "pyth
 
 Now you should be able to download multiple files concurrently:
 
-![Django App and two downloads](./images/two-downloads.png)
+![Django App and two downloads](../../images/two-downloads.png)
