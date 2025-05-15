@@ -26,11 +26,11 @@ https://apim.contoso.com/openai/deployments/aoai/chat/completions
 
 Remove `api-version` requirement from API:
 
-![api-version](./openai/images/api-version.png)
+![api-version](./images/api-version.png)
 
 Add `set-query-parameter` policy:
 
-![set-query-parameter](./openai/images/set-query-parameter.png)
+![set-query-parameter](./images/set-query-parameter.png)
 
 [Set query string parameter](https://learn.microsoft.com/en-us/azure/api-management/set-query-parameter-policy):
 
