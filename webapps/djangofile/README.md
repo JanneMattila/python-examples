@@ -14,7 +14,7 @@ This guide explains how to deploy a Django application to Azure App Service usin
 
 ```bash
 # Create a virtual environment and install dependencies
-py -m venv .venv
+python -m venv .venv
 
 # Activate the virtual environment
 .venv\scripts\activate

@@ -1,0 +1,2 @@
+openai>=1.3.0  # Required for Azure OpenAI support
+python-dotenv>=1.0.0
